@@ -13,18 +13,37 @@ if __name__ == "__main__":
 
     os.makedirs(data_singer)
 
+
     for speaker in os.listdir(data_speaker):
-        print(speaker)
-        subfile_num = 0
-        speaker_ave = 0
-        for file in os.listdir(os.path.join(data_speaker, speaker)):
-            if file.endswith(".npy"):
+        if os.path.isdir(f"{data_speaker}/{speaker}"):
+            print(speaker)
+            subfile_num = 0
+            speaker_ave = 0
+            for file in os.listdir(os.path.join(data_speaker, speaker)):
+                if file.endswith(".npy"):
+                    source_embed = np.load(
+                        os.path.join(data_speaker, speaker, file))
+                    source_embed = source_embed.astype(np.float32)
+                    speaker_ave = speaker_ave + source_embed
+                    subfile_num = subfile_num + 1
+            speaker_ave = speaker_ave / subfile_num
+
+            np.save(os.path.join(data_singer, f"{speaker}.spk.npy"),
+                    speaker_ave, allow_pickle=False)
+
+    subfile_num = 0
+    speaker_ave = 0
+    for file in os.listdir(data_speaker):
+        if not os.path.isdir(f"{data_speaker}/{file}"):
+            spkFile = os.path.join(data_speaker, file)
+            if spkFile.endswith(".npy"):
                 source_embed = np.load(
-                    os.path.join(data_speaker, speaker, file))
+                    os.path.join(data_speaker, file))
                 source_embed = source_embed.astype(np.float32)
                 speaker_ave = speaker_ave + source_embed
                 subfile_num = subfile_num + 1
-        speaker_ave = speaker_ave / subfile_num
 
-        np.save(os.path.join(data_singer, f"{speaker}.spk.npy"),
+    if subfile_num != 0 and speaker_ave != 0:
+        speaker_ave = speaker_ave / subfile_num
+        np.save(os.path.join(data_singer, f"spk.npy"),
                 speaker_ave, allow_pickle=False)

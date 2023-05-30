@@ -44,10 +44,10 @@ if __name__ == "__main__":
     whisper = load_model(os.path.join("whisper_pretrain", "medium.pt"))
 
     for spks in os.listdir(wavPath):
-        if os.path.isdir(f"./{wavPath}/{spks}"):
-            os.makedirs(f"./{ppgPath}/{spks}")
+        if os.path.isdir(f"{wavPath}/{spks}"):
+            os.makedirs(f"{ppgPath}/{spks}")
             print(f">>>>>>>>>>{spks}<<<<<<<<<<")
-            for file in os.listdir(f"./{wavPath}/{spks}"):
+            for file in os.listdir(f"{wavPath}/{spks}"):
                 if file.endswith(".wav"):
                     # print(file)
                     file = file[:-4]

@@ -1,4 +1,5 @@
 import os
+import sys
 import time
 import logging
 import math
@@ -153,6 +154,9 @@ def train(rank, args, chkpt_path, hp, hp_str):
 
     trainloader = create_dataloader_train(hp, args.num_gpus, rank)
 
+    last_loss_m = 0.44
+    last_loss_s = 8.6
+
     for epoch in range(init_epoch, hp.train.epochs):
 
         trainloader.batch_sampler.set_epoch(epoch)
@@ -259,6 +263,15 @@ def train(rank, args, chkpt_path, hp, hp_str):
                 logger.info("g %.04f m %.04f s %.04f d %.04f k %.04f r %.04f i %.04f | step %d" % (
                     loss_g, loss_m, loss_s, loss_d, loss_k, loss_r, loss_i, step))
 
+            if os.path.isfile(hp.train.pretrain) and loss_m < last_loss_m and loss_s < last_loss_s:
+                last_loss_m = loss_m
+                last_loss_s = loss_s
+                save_path = os.path.join(pth_dir, "best.pth")
+                torch.save({
+                    'model_g': (model_g.module if args.num_gpus > 1 else model_g).state_dict(),
+                }, save_path)
+                logger.info("Saved checkpoint to: %s" % save_path)
+
         if rank == 0 and epoch % hp.log.save_interval == 0:
             save_path = os.path.join(pth_dir, '%s_%04d.pt'
                                      % (args.name, epoch))
@@ -272,6 +285,10 @@ def train(rank, args, chkpt_path, hp, hp_str):
                 'hp_str': hp_str,
             }, save_path)
             logger.info("Saved checkpoint to: %s" % save_path)
+
+        if rank == 0 and step >= hp.log.max_step:
+            logger.info("over train. exiting...")
+            sys.exit(0)
 
         scheduler_g.step()
         scheduler_d.step()

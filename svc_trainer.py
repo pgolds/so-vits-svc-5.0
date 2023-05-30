@@ -1,3 +1,4 @@
+import os
 import argparse
 import torch
 import torch.multiprocessing as mp
@@ -16,11 +17,30 @@ if __name__ == '__main__':
                         help="path of checkpoint pt file to resume training")
     parser.add_argument('-n', '--name', type=str, required=True,
                         help="name of the model for logging, saving checkpoint")
+    parser.add_argument('--pth_dir', type=str, required=True,
+                        help="saving checkpoint path")
+    parser.add_argument('-d', '--dataRoot', type=str, required=True,
+                        help="data root filelists")
+    parser.add_argument('-s', '--save_interval', type=int, default=1500,
+                        help="saving step checkpoint")
+    parser.add_argument('-m', '--max_step', type=int, default=1510,
+                        help="saving step checkpoint")
     args = parser.parse_args()
 
     hp = OmegaConf.load(args.config)
     with open(args.config, 'r') as f:
         hp_str = ''.join(f.readlines())
+
+    # 替换
+    training_files = os.path.join(args.dataRoot, "filelists", "train.txt")
+    validation_files = os.path.join(args.dataRoot, "filelists", "valid.txt")
+    hp.data.training_files = training_files
+    hp.data.validation_files = validation_files
+
+    if args.pth_dir is not None:
+        hp.log.pth_dir = args.pth_dir
+    hp.log.save_interval = args.save_interval
+    hp.log.max_step = args.max_step
 
     assert hp.data.hop_length == 320, \
         'hp.data.hop_length must be equal to 320, got %d' % hp.data.hop_length

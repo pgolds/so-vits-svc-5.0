@@ -36,10 +36,10 @@ if __name__ == "__main__":
     hps = OmegaConf.load("./configs/base.yaml")
 
     for spks in os.listdir(wavPath):
-        if os.path.isdir(f"./{wavPath}/{spks}"):
-            os.makedirs(f"./{spePath}/{spks}")
+        if os.path.isdir(f"{wavPath}/{spks}"):
+            os.makedirs(f"{spePath}/{spks}")
             print(f">>>>>>>>>>{spks}<<<<<<<<<<")
-            for file in os.listdir(f"./{wavPath}/{spks}"):
+            for file in os.listdir(f"{wavPath}/{spks}"):
                 if file.endswith(".wav"):
                     # print(file)
                     file = file[:-4]

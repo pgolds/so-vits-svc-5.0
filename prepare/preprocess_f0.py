@@ -6,15 +6,15 @@ import argparse
 
 
 def compute_f0(path, save):
-    x, sr = librosa.load(path, sr=16000)
-    assert sr == 16000
+    x, sr = librosa.load(path, sr=32000)
+    assert sr == 32000
     f0, t = pyworld.dio(
         x.astype(np.double),
         fs=sr,
         f0_ceil=900,
         frame_period=1000 * 160 / sr,
     )
-    f0 = pyworld.stonemask(x.astype(np.double), f0, t, fs=16000)
+    f0 = pyworld.stonemask(x.astype(np.double), f0, t, fs=32000)
     for index, pitch in enumerate(f0):
         f0[index] = round(pitch, 1)
     np.save(save, f0, allow_pickle=False)
@@ -33,10 +33,10 @@ if __name__ == "__main__":
     pitPath = args.pit
 
     for spks in os.listdir(wavPath):
-        if os.path.isdir(f"./{wavPath}/{spks}"):
-            os.makedirs(f"./{pitPath}/{spks}")
+        if os.path.isdir(f"{wavPath}/{spks}"):
+            os.makedirs(f"{pitPath}/{spks}")
             print(f">>>>>>>>>>{spks}<<<<<<<<<<")
-            for file in os.listdir(f"./{wavPath}/{spks}"):
+            for file in os.listdir(f"{wavPath}/{spks}"):
                 if file.endswith(".wav"):
                     # print(file)
                     file = file[:-4]
