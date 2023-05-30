@@ -154,8 +154,8 @@ def train(rank, args, chkpt_path, hp, hp_str):
 
     trainloader = create_dataloader_train(hp, args.num_gpus, rank)
 
-    last_loss_m = 0.46
-    last_loss_s = 9.2
+    last_loss_m = 0.45
+    last_loss_s = 9.0
 
     for epoch in range(init_epoch, hp.train.epochs):
 
