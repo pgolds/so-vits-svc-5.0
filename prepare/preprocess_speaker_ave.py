@@ -11,7 +11,7 @@ if __name__ == "__main__":
     data_speaker = parser.parse_args().dataset_speaker
     data_singer = parser.parse_args().dataset_singer
 
-    os.makedirs(data_singer)
+    os.makedirs(data_singer, exist_ok=True)
 
 
     for speaker in os.listdir(data_speaker):

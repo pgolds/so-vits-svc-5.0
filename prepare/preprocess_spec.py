@@ -30,7 +30,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
     print(args.wav)
     print(args.spe)
-    os.makedirs(args.spe)
+    os.makedirs(args.spe, exist_ok=True)
     wavPath = args.wav
     spePath = args.spe
     hps = OmegaConf.load("./configs/base.yaml")
