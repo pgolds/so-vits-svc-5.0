@@ -176,6 +176,8 @@ if __name__ == '__main__':
                         help="Path of raw audio.")
     parser.add_argument('-o', '--output', type=str, required=True,
                         help="Path of output audio")
+    parser.add_argument('--shift', type=int, default=0,
+                        help="Pitch shift key.")
     args = parser.parse_args()
 
     main(args)

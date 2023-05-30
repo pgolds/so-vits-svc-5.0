@@ -112,7 +112,7 @@ def run(args):
     shutil.copy(os.path.join(args.dataRoot, "spk.npy"), timbrePath)
 
     # run train
-    train_cmd = f"{python_bin} svc_trainer.py --config {args.config} --name {args.name} --chkpt_dir {args.modelPath} --dataRoot {args.dataRoot} --save_interval {args.save_interval} --max_step {args.max_step}"
+    train_cmd = f"{python_bin} svc_trainer.py --config {args.config} --name {args.name} --pth_dir {args.modelPath} --dataRoot {args.dataRoot} --save_interval {args.save_interval} --max_step {args.max_step}"
     result = run_cmd(train_cmd, None, message=f"error: step 10 => 训练异常", check_result_path=modelPath)
     if not result:
         sys.exit(1)
@@ -120,7 +120,7 @@ def run(args):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument('--config', type=str, default="config/finetune.yaml",
+    parser.add_argument('--config', type=str, default="configs/finetune.yaml",
                         help="yaml file for config.")
     parser.add_argument('--dataRoot', type=str,
                         help="Path of datasets root")
@@ -130,7 +130,7 @@ if __name__ == "__main__":
                         help="saving step checkpoint")
     parser.add_argument('-m', '--max_step', type=int, default=1510,
                         help="saving step checkpoint")
-    parser.add_argument('--sr', type=int, default=48000, help="audio sample rate")
+    parser.add_argument('--sr', type=int, default=32000, help="audio sample rate")
     parser.add_argument('-n', '--name', type=str, help="train run name")
     args = parser.parse_args()
     run(args)

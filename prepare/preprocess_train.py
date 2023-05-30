@@ -6,7 +6,7 @@ import random
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.description = 'please enter embed parameter ...'
-    parser.add_argument("--dataRoot", help="datasets path", dest="filelists")
+    parser.add_argument("--dataRoot", type=str, help="datasets path")
     args = parser.parse_args()
     os.makedirs(os.path.join(args.dataRoot, "filelists"), exist_ok=True)
 

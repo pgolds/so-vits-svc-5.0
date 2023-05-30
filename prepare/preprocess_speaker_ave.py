@@ -2,7 +2,6 @@ import os
 import argparse
 import numpy as np
 
-
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.description = 'please enter embed parameter ...'
@@ -12,7 +11,6 @@ if __name__ == "__main__":
     data_singer = parser.parse_args().dataset_singer
 
     os.makedirs(data_singer, exist_ok=True)
-
 
     for speaker in os.listdir(data_speaker):
         if os.path.isdir(f"{data_speaker}/{speaker}"):
@@ -43,7 +41,7 @@ if __name__ == "__main__":
                 speaker_ave = speaker_ave + source_embed
                 subfile_num = subfile_num + 1
 
-    if subfile_num != 0 and speaker_ave != 0:
+    if subfile_num is not None and speaker_ave is not None:
         speaker_ave = speaker_ave / subfile_num
         np.save(os.path.join(data_singer, f"spk.npy"),
                 speaker_ave, allow_pickle=False)

@@ -12,7 +12,7 @@ def compute_f0(path, save):
         x.astype(np.double),
         fs=sr,
         f0_ceil=900,
-        frame_period=1000 * 160 / sr,
+        frame_period=1000 * 320 / sr,
     )
     f0 = pyworld.stonemask(x.astype(np.double), f0, t, fs=32000)
     for index, pitch in enumerate(f0):
