@@ -55,56 +55,56 @@ def run(args):
     filelistsPath = os.path.join(args.dataRoot, "filelists")
 
     # slice audio
-    slice_cmd = f"{python_bin} slicer.py {rawAudioPath} --out {audioPath}"
+    slice_cmd = f"{python_bin} slicer.py {rawAudioPath} --out {audioSlicePath}"
     result = run_cmd(slice_cmd, None, message=f"error: step 1 => 分割音频处理失败", check_result_path=audioSlicePath)
+    if not result:
+        sys.exit(1)
+
+    # denoise audio
+    denoise_cmd = f"{python_bin} denoise.py --out_dir {audioSlicePath}"
+    result = run_cmd(denoise_cmd, None, message=f"error: step 2 => 降噪音频处理失败", check_result_path=audioSlicePath)
     if not result:
         sys.exit(1)
 
     # normal audio
     normal_cmd = f"{python_bin} normal.py --in_dir {audioSlicePath} --out_dir {audioPath} --sr {sr}"
-    result = run_cmd(normal_cmd, None, message=f"error step 1 => 标准化音频处理失败", check_result_path=audioPath)
-    if not result:
-        sys.exit(1)
-
-    # denoise audio
-    denoise_cmd = f"{python_bin} denoise.py --out_dir {audioPath}"
-    result = run_cmd(denoise_cmd, None, message=f"error: step 2 => 降噪音频处理失败", check_result_path=audioPath)
+    result = run_cmd(normal_cmd, None, message=f"error step 3 => 标准化音频处理失败", check_result_path=audioPath)
     if not result:
         sys.exit(1)
 
     # generate speaker
     speaker_cmd = f"{python_bin} prepare/preprocess_speaker.py {audioPath} {speakerPath}"
-    result = run_cmd(speaker_cmd, None, message=f"error: step 3 => 提取音频音色失败", check_result_path=speakerPath)
+    result = run_cmd(speaker_cmd, None, message=f"error: step 4 => 提取音频音色失败", check_result_path=speakerPath)
     if not result:
         sys.exit(1)
 
     # generate ppg
     ppg_cmd = f"{python_bin} prepare/preprocess_ppg.py -w {audioPath} -p {whisperPath}"
-    result = run_cmd(ppg_cmd, None, message=f"error: step 4 => 提取音频PPG失败", check_result_path=whisperPath)
+    result = run_cmd(ppg_cmd, None, message=f"error: step 5 => 提取音频PPG失败", check_result_path=whisperPath)
     if not result:
         sys.exit(1)
 
     # generate pit
     pit_cmd = f"{python_bin} prepare/preprocess_f0.py -w {audioPath} -p {pitPath}"
-    result = run_cmd(pit_cmd, None, message=f"error: step 5 => 提取音频F0失败", check_result_path=pitPath)
+    result = run_cmd(pit_cmd, None, message=f"error: step 6 => 提取音频F0失败", check_result_path=pitPath)
     if not result:
         sys.exit(1)
 
     # generate specs
     specs_cmd = f"{python_bin} prepare/preprocess_spec.py -w {audioPath} -s {specsPath}"
-    result = run_cmd(specs_cmd, None, message=f"error: step 6 => 提取音频线性谱失败", check_result_path=specsPath)
+    result = run_cmd(specs_cmd, None, message=f"error: step 7 => 提取音频线性谱失败", check_result_path=specsPath)
     if not result:
         sys.exit(1)
 
     # generate speaker ave
     timbre_cmd = f"{python_bin} prepare/preprocess_speaker_ave.py {speakerPath} {args.dataRoot}"
-    result = run_cmd(timbre_cmd, None, message=f"error: step 7 => 提取平均音色合成文件失败")
+    result = run_cmd(timbre_cmd, None, message=f"error: step 8 => 提取平均音色合成文件失败")
     if not result:
         sys.exit(1)
 
     # generate filelists
     filelists_cmd = f"{python_bin} prepare/preprocess_train.py --dataRoot {args.dataRoot}"
-    result = run_cmd(filelists_cmd, None, message=f"error: step 8 => 生成训练标注文件失败", check_result_path=filelistsPath)
+    result = run_cmd(filelists_cmd, None, message=f"error: step 9 => 生成训练标注文件失败", check_result_path=filelistsPath)
     if not result:
         sys.exit(1)
 
@@ -113,7 +113,7 @@ def run(args):
 
     # run train
     train_cmd = f"{python_bin} svc_trainer.py --config {args.config} --name {args.name} --chkpt_dir {args.modelPath} --dataRoot {args.dataRoot} --save_interval {args.save_interval} --max_step {args.max_step}"
-    result = run_cmd(train_cmd, None, message=f"error: step 9 => 训练异常", check_result_path=modelPath)
+    result = run_cmd(train_cmd, None, message=f"error: step 10 => 训练异常", check_result_path=modelPath)
     if not result:
         sys.exit(1)
 
