@@ -58,17 +58,17 @@ if __name__ == "__main__":
     device = "cuda" if torch.cuda.is_available() else "cpu"
 
     for spks in os.listdir(wavPath):
-        if os.path.isdir(f"./{wavPath}/{spks}"):
-            os.makedirs(f"./{pitPath}/{spks}")
+        if os.path.isdir(f"{wavPath}/{spks}"):
+            os.makedirs(f"{pitPath}/{spks}")
             print(f">>>>>>>>>>{spks}<<<<<<<<<<")
-            for file in os.listdir(f"./{wavPath}/{spks}"):
+            for file in os.listdir(f"{wavPath}/{spks}"):
                 if file.endswith(".wav"):
-                    print(file)
+                    # print(file)
                     file = file[:-4]
                     compute_f0(f"{wavPath}/{spks}/{file}.wav", f"{pitPath}/{spks}/{file}.pit", device)
         else:
             file = spks
             if file.endswith(".wav"):
-                print(file)
+                # print(file)
                 file = file[:-4]
                 compute_f0(f"{wavPath}/{file}.wav", f"{pitPath}/{file}.pit", device)

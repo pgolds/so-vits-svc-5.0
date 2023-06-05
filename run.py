@@ -85,7 +85,7 @@ def run(args):
         sys.exit(1)
 
     # generate pit
-    pit_cmd = f"{python_bin} prepare/preprocess_f0.py -w {audioPath} -p {pitPath}"
+    pit_cmd = f"{python_bin} prepare/preprocess_f0_crepe.py -w {audioPath} -p {pitPath}"
     result = run_cmd(pit_cmd, None, message=f"error: step 6 => 提取音频F0失败", check_result_path=pitPath)
     if not result:
         sys.exit(1)
