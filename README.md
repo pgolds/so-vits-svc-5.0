@@ -7,7 +7,9 @@
 <img alt="GitHub forks" src="https://img.shields.io/github/forks/PlayVoice/so-vits-svc-5.0">
 <img alt="GitHub issues" src="https://img.shields.io/github/issues/PlayVoice/so-vits-svc-5.0">
 <img alt="GitHub" src="https://img.shields.io/github/license/PlayVoice/so-vits-svc-5.0">
- 
+
+[CodeWithGPU](https://www.codewithgpu.com/i/PlayVoice/so-vits-svc-5.0/so-vits-svc-v5)
+
 </div>
 
 - 💗本项目的目标群体是：深度学习初学者，具备Python和PyTorch的基本操作是使用本项目的前置条件；
@@ -27,13 +29,11 @@
 
 - 【用 Excel】进行原始调教，纯手工
 
-本项目并不基于svc-develop-team/so-vits-svc，恰恰相反，见https://github.com/svc-develop-team/so-vits-svc/tree/2.0
-
 ## 模型和日志：
 
 https://github.com/PlayVoice/so-vits-svc-5.0/releases/tag/bigvgan_release
 
-- [sovits5.0_bigvgan_350.pth](https://github.com/PlayVoice/so-vits-svc-5.0/releases/download/bigvgan_release/sovits5.0_bigvgan_350.pth)模型包括：生成器+判别器=197M，可用作预训练模型
+- [sovits5.0_bigvgan_555.pth](https://github.com/PlayVoice/so-vits-svc-5.0/releases/download/bigvgan_release/sovits5.0_bigvgan_555.pth)模型包括：生成器+判别器=197M，可用作预训练模型
 - 发音人（56个）文件在configs/singers目录中，可进行推理测试，尤其测试音色泄露
 - 发音人22，30，47，51辨识度较高，训练音频样本在configs/singers_sample目录中
 
@@ -84,6 +84,7 @@ dataset_raw
 
 - 3 下载whisper模型 [multiple language medium model](https://openaipublic.azureedge.net/main/whisper/models/345ae4da62f9b3d59415adc60127b97c714f32e89e936602e85993674d08dcb1/medium.pt), 确定下载的是`medium.pt`，把它放到文件夹 `whisper_pretrain/`
 
+- 4 不能额外安装whisper，否则会和代码内置whisper冲突
 
 ## 数据预处理
 - 1， 设置工作目录:heartpulse::heartpulse::heartpulse:不设置后面会报错
@@ -106,6 +107,10 @@ dataset_raw
 
 - 3， 使用16K音频，提取音高：注意f0_ceil=900，需要根据您数据的最高音进行修改
     > python prepare/preprocess_f0.py -w data_svc/waves-16k/ -p data_svc/pitch
+
+    低质量音频使用下面指令处理
+
+    > python prepare/preprocess_f0_crepe.py -w data_svc/waves-16k/ -p data_svc/pitch
 
 - 4， 使用16k音频，提取内容编码
     > python prepare/preprocess_ppg.py -w data_svc/waves-16k/ -p data_svc/whisper
