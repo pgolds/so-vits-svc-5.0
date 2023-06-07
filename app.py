@@ -33,7 +33,7 @@ parser.add_argument("--share", action="store_true",
 parser.add_argument("--song_path", type=str,
                     default="/data2/song_dir", help="song dir")
 parser.add_argument("--model_path", type=str,
-                    default="/data2/svc_dir", help="model dir")
+                    default="/data2/singing/models", help="model dir")
 parser.add_argument("--outPath", type=str,
                     default="infer_out", help="inference output dir")
 
@@ -43,6 +43,14 @@ speakers = []
 songs = []
 
 if __name__ == "__main__":
+
+    for f in os.scandir(args.model_path):
+        if f.is_dir():
+            speakers.append(f.name)
+
+    for f in os.scandir(args.song_path):
+        if f.is_dir():
+            songs.append(f.name)
 
     app = gr.Blocks()
     with app:
