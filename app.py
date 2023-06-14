@@ -5,8 +5,11 @@ import gradio as gr
 
 def inference_svc(speaker, songName):
     songPath = os.path.join(args.song_path, songName)
-    output = os.path.join(args.outPath, speaker, time.strftime("%Y-%m-%d", time.localtime()), str(round(time.time() * 1000)), ".mp3")
-    cmd = f"python gen.py --modelPath {args.model_path} --spk {speaker} --songPath {songPath} --output {output}"
+    outputPath = os.path.join(args.outPath, speaker, time.strftime("%Y-%m-%d", time.localtime()))
+    os.makedirs(outputPath, exist_ok=True)
+    nowTimestamp = str(round(time.time() * 1000))
+    output = f"{outputPath}/{nowTimestamp}.mp3"
+    cmd = f"CUDA_VISIBLE_DEVICES=0 PYTHONPATH=$PWD python gen.py --modelPath {args.model_path} --spk {speaker} --songPath {songPath} --output {output}"
     print(cmd)
     os.system(cmd)
     return output
@@ -67,10 +70,10 @@ if __name__ == "__main__":
                             label="合成歌曲", elem_id="generate-audio")
                         btn = gr.Button("生成歌曲")
                         btn.click(inference_svc,
-                                  inputs=[song, speaker],
+                                  inputs=[speaker, song],
                                   outputs=[audio_output])
 
-                    speaker.change(refresh_spk, [speaker], [speaker])
-                    song.change(refresh_song, [song], [song])
+                    speaker.change(refresh_spk, [], [speaker])
+                    song.change(refresh_song, [], [song])
 
     app.queue(concurrency_count=3).launch(show_api=False, share=args.share, server_name="0.0.0.0", server_port=12000)
