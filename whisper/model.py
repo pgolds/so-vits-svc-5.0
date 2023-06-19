@@ -27,7 +27,7 @@ class ModelDimensions:
 
 class LayerNorm(nn.LayerNorm):
     def forward(self, x: Tensor) -> Tensor:
-        return super().forward(x.float()).type(x.dtype)
+        return super().forward(x).type(x.dtype)
 
 
 class Linear(nn.Linear):
