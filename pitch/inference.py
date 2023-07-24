@@ -1,9 +1,12 @@
-import os
+import os,sys
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 import torch
 import librosa
 import argparse
 import numpy as np
 import torchcrepe
+import rmvpe
+import soundfile
 
 
 def compute_f0_nn(filename, device):
@@ -38,7 +41,7 @@ def compute_f0_nn(filename, device):
     # CREPE was not trained on silent audio. some error on silent need filter.pitPath
     periodicity = torchcrepe.filter.median(periodicity, 9)
     pitch = torchcrepe.filter.mean(pitch, 5)
-    pitch[periodicity < 0.1] = 0
+    # pitch[periodicity < 0.1] = 0
     pitch = pitch.squeeze(0)
     return pitch
 
@@ -73,7 +76,20 @@ if __name__ == "__main__":
     print(args.pit)
 
     device = "cuda" if torch.cuda.is_available() else "cpu"
-    pitch = compute_f0_nn(args.wav, device)
+    # crepe extra f0
+    # pitch = compute_f0_nn(args.wav, device)
+
+    # rmvpe extra f0
+    rmv = rmvpe.RMVPE(os.path.join("rmvpe_pretrain", "rmvpe.pt"), is_half=False, device=device)
+    audio, sampling_rate = soundfile.read(args.wav)
+    if len(audio.shape) > 1:
+        audio = librosa.to_mono(audio.transpose(1, 0))
+    if sampling_rate != 16000:
+        audio = librosa.resample(audio, orig_sr=sampling_rate, target_sr=16000)
+    pitch = rmv.infer_from_audio(audio, thred=0.03)
+    pitch = np.repeat(pitch, 2, -1)
+
     save_csv_pitch(pitch, args.pit)
+
     #tmp = load_csv_pitch(args.pit)
     #save_csv_pitch(tmp, "tmp.csv")
