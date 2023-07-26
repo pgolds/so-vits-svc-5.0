@@ -14,6 +14,7 @@ def compute_f0_nn(filename, device):
     assert sr == 16000
     # Load audio
     audio = torch.tensor(np.copy(audio))[None]
+    audio = audio + torch.randn_like(audio) * 0.001
     # Here we'll use a 20 millisecond hop length
     hop_length = 320
     # Provide a sensible frequency range for your domain (upper limit is 2006 Hz)
